@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AliPoster
+﻿namespace EpnParser
 {
 	class Program
 	{
