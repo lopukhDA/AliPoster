@@ -1,5 +1,4 @@
 ﻿using System.Configuration;
-using Common.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -14,7 +13,6 @@ namespace EpnParser.EpnApi.Entity
 		public string UserHash { get; set; } = ConfigurationManager.AppSettings.Get("user_hash");
 
 		[JsonProperty("api_version")]
-		//[JsonConverter(typeof(JsonExtensions.ParseStringConverter))]
 		public string ApiVersion { get; set; } = "2";
 
 		[JsonProperty("requests")]
@@ -34,6 +32,7 @@ namespace EpnParser.EpnApi.Entity
 		public ActionRequest ActionRequest { get; set; }
 
 		[JsonProperty("lang")]
+		[JsonConverter(typeof(StringEnumConverter))]
 		public Lang Lang { get; set; }
 
 		[JsonProperty("currency")]

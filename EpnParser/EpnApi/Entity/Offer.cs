@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -12,7 +11,6 @@ namespace EpnParser.EpnApi.Entity
 		public string Id { get; set; }
 
 		[JsonProperty("id_category")]
-		//[JsonConverter(typeof(JsonExtensions.ParseStringConverter))]
 		public string IdCategory { get; set; }
 
 		[JsonProperty("name")]
