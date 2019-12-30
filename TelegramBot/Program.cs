@@ -1,13 +1,4 @@
-﻿using System;
-using System.Configuration;
-using System.Linq;
-using System.Threading;
-using EpnParser.EpnApi;
-using EpnParser.EpnApi.Entity;
-using Telegram.Bot;
-using Telegram.Bot.Args;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
+﻿using System.Threading;
 
 namespace TelegramBot
 {
@@ -20,7 +11,5 @@ namespace TelegramBot
 
 			Thread.Sleep(int.MaxValue);
 		}
-
-		
 	}
 }

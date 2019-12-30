@@ -11,7 +11,7 @@ namespace EpnParser.EpnApi
 	public class Parser
 	{
 		private const string Url = "http://api.epn.bz/json";
-		private readonly Random _rand = new Random();
+		//private readonly Random _rand = new Random();
 		private readonly PastProductsFile _productsFile = new PastProductsFile();
 
 		public static Offer GetProduct(string id)
@@ -66,19 +66,20 @@ namespace EpnParser.EpnApi
 			return responseObj;
 		}
 
-		public Offer GetRandomProductOfTopProduct()
-		{
-			var products = GetTopProduct();
-			var itemNumber = _rand.Next(products.Count);
-			var product = products[itemNumber];
+		//public Offer GetRandomProductOfTopProduct()
+		//{
+		//	var products = GetTopProduct();
+		//	var itemNumber = _rand.Next(products.Count);
+		//	var product = products[itemNumber];
 
-			if (_productsFile.IsExist(product.ProductId))
-			{
-				GetRandomProductOfTopProduct();
-			}
+		//	//loop
+		//	if (_productsFile.IsExist(product.ProductId))
+		//	{
+		//		GetRandomProductOfTopProduct();
+		//	}
 
-			return product;
-		}
+		//	return product;
+		//}
 
 		public static Offer GetProductFromUrl(string url)
 		{
@@ -90,6 +91,21 @@ namespace EpnParser.EpnApi
 			var productId = productsId[0].Groups[1].Value;
 
 			return GetProduct(productId);
+		}
+
+		public Offer GetNewProductFromTopList()
+		{
+			var topProducts = GetTopProduct();
+
+			foreach (var product in topProducts)
+			{
+				if (!_productsFile.IsExist(product.ProductId))
+				{
+					return product;
+				}
+			}
+
+			return null;
 		}
 	}
 }

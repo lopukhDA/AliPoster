@@ -1,4 +1,5 @@
 ﻿using System;
+using EpnParser.EpnApi;
 
 namespace AliPoster
 {
@@ -7,9 +8,9 @@ namespace AliPoster
 		static void Main(string[] args)
 		{
 			Parser parser = new Parser();
-			var offer = parser.GetProduct("32953827389");
+			//var offer = parser.GetProduct("32953827389");
 
-			var offers = parser.GetTopProduct();
+			//var offers = parser.GetTopProduct();
 		}
 	}
 }

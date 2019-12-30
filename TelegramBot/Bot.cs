@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Text;
-using System.Threading;
 using EpnParser.EpnApi;
 using EpnParser.EpnApi.Entity;
 using Telegram.Bot;
@@ -17,7 +14,8 @@ namespace TelegramBot
 		private static ITelegramBotClient _botClient;
 		private static readonly ChatId ChatId = "-1001418836364";
 
-		private readonly Parser _parser = new Parser();
+		private readonly Commands _commands = new Commands();
+		private readonly PastProductsFile _pastProductsFile = new PastProductsFile();
 
 		public void Run()
 		{
@@ -28,10 +26,10 @@ namespace TelegramBot
 				$"Hello, World! I am user {me.Id} and my name is {me.FirstName}."
 			);
 
-			//var myMsg = new Message
-			//{
-			//	Text = "Trying *all the parameters* of `sendMessage` method",
-			//};
+			var myMsg = new Message
+			{
+				Text = "Trying *all the parameters* of `sendMessage` method",
+			};
 
 			_botClient.OnMessage += OnMessage;
 
@@ -39,13 +37,13 @@ namespace TelegramBot
 		}
 
 
-		static async void OnMessage(object sender, MessageEventArgs e)
+		async void OnMessage(object sender, MessageEventArgs e)
 		{
 			if (e.Message.Text != null)
 			{
 				if (e.Message.Text.StartsWith('/'))
 				{
-					Commands.ExecuteCommand(e.Message.Text);
+					ExecuteCommand(e.Message.Text);
 				}
 				else
 				{
@@ -58,7 +56,33 @@ namespace TelegramBot
 			}
 		}
 
-		public static async void PostMessage(Message message)
+		public void ExecuteCommand(string message)
+		{
+			var command = _commands.StringToCommand(message);
+			switch (command)
+			{
+				case EnumCommands.NotCommand:
+					PostMessage(message);
+					break;
+				case EnumCommands.Url:
+					var productUrl = _commands.Url(message);
+					PostPhoto(productUrl);
+					break;
+				case EnumCommands.Id:
+					var productId = _commands.Id(message);
+					PostPhoto(productId);
+					break;
+				case EnumCommands.New:
+					var productNew = _commands.New();
+					PostPhoto(productNew);
+					break;
+				default:
+					PostMessage(message);
+					break;
+			}
+		}
+
+		public async void PostMessage(Message message)
 		{
 			await _botClient.SendTextMessageAsync(
 				chatId: ChatId,
@@ -67,33 +91,44 @@ namespace TelegramBot
 			);
 		}
 
-		public static async void PostMessage(string text)
+		public async void PostMessage(string text)
 		{
-			await _botClient.SendTextMessageAsync(
-				chatId: ChatId,
-				text: text,
-				parseMode: ParseMode.Markdown
-			);
+			if (!string.IsNullOrEmpty(text))
+			{
+				await _botClient.SendTextMessageAsync(
+					chatId: ChatId,
+					text: text,
+					parseMode: ParseMode.Markdown
+				);
+			}
 		}
 
-		public static async void PostPhoto(Message message)
+		public async void PostPhoto(Message message)
 		{
-			await _botClient.SendPhotoAsync(
-				chatId: ChatId,
-				photo: "https://github.com/TelegramBots/book/raw/master/src/docs/photo-ara.jpg",
-				caption: message.Text,
-				parseMode: ParseMode.Html
-			);
+			if (message != null)
+			{
+				await _botClient.SendPhotoAsync(
+					chatId: ChatId,
+					photo: "https://github.com/TelegramBots/book/raw/master/src/docs/photo-ara.jpg",
+					caption: message.Text,
+					parseMode: ParseMode.Html
+				);
+			}
 		}
 
-		public static async void PostPhoto(Offer product)
+		public async void PostPhoto(Offer product)
 		{
-			await _botClient.SendPhotoAsync(
-				chatId: ChatId,
-				photo: product.Picture.AbsoluteUri,
-				caption: $"{product.Name}\nЦена: *{product.Price}$*\n{product.Url}",
-				parseMode: ParseMode.Markdown
-			);
+			if (product != null)
+			{
+				await _botClient.SendPhotoAsync(
+					chatId: ChatId,
+					photo: product.Picture.AbsoluteUri,
+					caption: $"{product.Name}\nЦена: *{product.Price}$*\n{product.Url}",
+					parseMode: ParseMode.Markdown
+				);
+
+				_pastProductsFile.WriteFile(product.Id);
+			}
 		}
 	}
 }

@@ -14,7 +14,7 @@ namespace EpnParser
 
 			PastProductsFile file = new PastProductsFile();
 
-			var x = parser.GetRandomProductOfTopProduct();
+			var x = parser.GetNewProductFromTopList();
 
 			foreach (var offer in offers)
 			{
